@@ -1,0 +1,1 @@
+This is the complete Event Nest MVP with both Ticketmaster and Google Places integration.

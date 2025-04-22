@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import FilterBar from './components/FilterBar';
+import TimeFilter from './components/TimeFilter';
 
 const fallbackData = [
   {
@@ -20,6 +21,7 @@ const fallbackData = [
       rating: "4.7",
       price: "$20",
       tags: "Live Comedy · Small Venue",
+      date: "Tonight",
       img: "https://cdn.thecomedystudio.com/comedy-studio-show.jpg",
       website: "https://www.thecomedystudio.com"
     }
@@ -28,16 +30,21 @@ const fallbackData = [
 
 export default function App() {
   const [filters, setFilters] = useState({ cuisine: '', vibe: '', price: '' });
+  const [timeRange, setTimeRange] = useState('Any');
+
   const filtered = fallbackData.filter(i => {
     return (!filters.cuisine || i.restaurant.cuisine === filters.cuisine) &&
            (!filters.vibe || i.restaurant.vibe === filters.vibe) &&
-           (!filters.price || i.restaurant.price === filters.price);
+           (!filters.price || i.restaurant.price === filters.price) &&
+           (timeRange === 'Any' || i.event.date === timeRange);
   });
+
   const itinerary = filtered[0] || fallbackData[0];
 
   return (
     <div className="p-4 space-y-6 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold text-purple-600">Plan My Night Out</h1>
+      <TimeFilter timeRange={timeRange} setTimeRange={setTimeRange} />
       <FilterBar filters={filters} setFilters={setFilters} />
 
       {[itinerary.restaurant, itinerary.event].map((venue, idx) => (

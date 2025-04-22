@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FilterBar from './components/FilterBar';
 
 const fallbackData = [
   {
@@ -8,6 +9,8 @@ const fallbackData = [
       rating: "4.8",
       price: "$$$",
       tags: "Italian · Romantic · Cozy",
+      cuisine: "Italian",
+      vibe: "Romantic",
       img: "https://media.timeout.com/images/105256081/image.jpg",
       website: "https://www.pammyscambridge.com"
     },
@@ -24,17 +27,21 @@ const fallbackData = [
 ];
 
 export default function App() {
-  const [itinerary] = useState(fallbackData[0]);
+  const [filters, setFilters] = useState({ cuisine: '', vibe: '', price: '' });
+  const filtered = fallbackData.filter(i => {
+    return (!filters.cuisine || i.restaurant.cuisine === filters.cuisine) &&
+           (!filters.vibe || i.restaurant.vibe === filters.vibe) &&
+           (!filters.price || i.restaurant.price === filters.price);
+  });
+  const itinerary = filtered[0] || fallbackData[0];
 
   return (
     <div className="p-4 space-y-6 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold text-purple-600">Plan My Night Out</h1>
+      <FilterBar filters={filters} setFilters={setFilters} />
 
       {[itinerary.restaurant, itinerary.event].map((venue, idx) => (
         <div key={idx} className="p-4 border shadow rounded space-y-2 bg-white">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-purple-700">{idx === 0 ? 'Restaurant' : 'Event'}</span>
-          </div>
           <h2 className="text-lg font-semibold">{venue.name}</h2>
           <p className="text-sm text-gray-500">{venue.location}</p>
           <img src={venue.img} alt={venue.name} onError={(e) => e.currentTarget.src='https://via.placeholder.com/400x200?text=No+Image'} className="rounded w-full" />

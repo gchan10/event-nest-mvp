@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FilterBar from './components/FilterBar';
 import TimeFilter from './components/TimeFilter';
+import { fetchTicketmasterEvents } from './components/fetchTicketmasterEvents';
 
 const fallbackData = [
   {
@@ -30,16 +31,29 @@ const fallbackData = [
 
 export default function App() {
   const [filters, setFilters] = useState({ cuisine: '', vibe: '', price: '' });
-  const [timeRange, setTimeRange] = useState('Any');
+  const [timeRange, setTimeRange] = useState('Tonight');
+  const [itineraries, setItineraries] = useState(fallbackData);
 
-  const filtered = fallbackData.filter(i => {
+  useEffect(() => {
+    fetchTicketmasterEvents(timeRange).then(events => {
+      if (!events.length) return;
+      const enriched = events.map(e => ({
+        restaurant: fallbackData[0].restaurant,
+        event: e
+      }));
+      setItineraries(enriched);
+    }).catch(() => {
+      setItineraries(fallbackData);
+    });
+  }, [timeRange]);
+
+  const filtered = itineraries.filter(i => {
     return (!filters.cuisine || i.restaurant.cuisine === filters.cuisine) &&
            (!filters.vibe || i.restaurant.vibe === filters.vibe) &&
-           (!filters.price || i.restaurant.price === filters.price) &&
-           (timeRange === 'Any' || i.event.date === timeRange);
+           (!filters.price || i.restaurant.price === filters.price);
   });
 
-  const itinerary = filtered[0] || fallbackData[0];
+  const itinerary = filtered[0] || itineraries[0];
 
   return (
     <div className="p-4 space-y-6 max-w-xl mx-auto">

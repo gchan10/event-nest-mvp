@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+  background: #FAF7F2;
+  color: #2B2B2A;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+body { overscroll-behavior-y: none; }
+button { touch-action: manipulation; }
+input, textarea, select { font-size: 16px; } /* prevent iOS zoom */
+input[type='date'] { min-height: 50px; -webkit-appearance: none; appearance: none; }
+
+@layer utilities {
+  .pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+}
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
